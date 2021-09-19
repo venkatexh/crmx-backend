@@ -16,7 +16,7 @@ const contactSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  createdAt: new Date(),
+  createdAt: Date,
   lastUpdatedAt: String,
 });
 

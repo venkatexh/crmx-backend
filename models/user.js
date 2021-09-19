@@ -29,7 +29,7 @@ userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
       return next();
     }
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
     return next();
   } catch (err) {
     return next(err);
@@ -38,8 +38,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.comparePassword = async function (candidate, next) {
   try {
-    let isMatch = bcrypt.compare(candidate, this.password);
-    return isMatch;
+    return bcrypt.compare(candidate, this.password);
   } catch (err) {
     return next(err);
   }
