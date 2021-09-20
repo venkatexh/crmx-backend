@@ -2,9 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const errorHandler = require("./handlers/error");
 const authRoutes = require("./routes/auth");
-
+const cors = require("cors");
 const app = express();
 
+const corsOptions = {
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
