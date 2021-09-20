@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const errorHandler = require("./handlers/error");
 const authRoutes = require("./routes/auth");
+const contactRoutes = require("./routes/contact");
 const cors = require("cors");
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
   res.status(200).send("CRMX API");
 });
 app.use("/api/auth", authRoutes);
+app.use("/api/user/:id/contacts", contactRoutes);
 
 app.use(function (req, res, next) {
   let error = new Error("Not found!");
