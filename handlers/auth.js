@@ -4,11 +4,13 @@ const jwt = require("jsonwebtoken");
 exports.signin = async (req, res, next) => {
   try {
     let user = await db.User.findOne({ email: req.body.email });
-    let { id, email } = user;
+    let { id, email, firstName, lastName, company } = user;
     let isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
       let token = jwt.sign({ id, email }, "crmx secret");
-      return res.status(200).json({ id, email, token });
+      return res
+        .status(200)
+        .json({ id, email, token, firstName, lastName, company });
     } else {
       return next({
         status: 400,
@@ -26,9 +28,11 @@ exports.signin = async (req, res, next) => {
 exports.signup = async (req, res, next) => {
   try {
     let user = await db.User.create(req.body);
-    let { id, email } = user;
+    let { id, email, firstName, lastName, company } = user;
     let token = jwt.sign({ id, email }, "crmx secret");
-    return res.status(200).json({ id, email, token });
+    return res
+      .status(200)
+      .json({ id, email, token, firstName, lastName, company });
   } catch (err) {
     if (err.Code === 11000) {
       err.message = "Email already taken";
