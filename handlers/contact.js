@@ -10,6 +10,7 @@ exports.createContact = async (req, res, next) => {
       location: req.body.location,
       language: req.body.language,
       tags: req.body.tags,
+      owner: req.params.id,
     });
     let foundUser = await db.User.findById(req.params.id);
     foundUser.contacts.push(contact.id);
