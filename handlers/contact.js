@@ -2,6 +2,15 @@ const db = require("../models");
 
 exports.createContact = async (req, res, next) => {
   try {
+    let foundUser = await db.User.findById(req.params.id);
+    let userContacts = await db.Contact.find({ owner: req.params.id });
+    userContacts.forEach((contact) => {
+      if (contact.email === req.body.email) {
+        return res
+          .status(400)
+          .json({ message: "Contact with same email already exists." });
+      }
+    });
     let contact = await db.Contact.create({
       email: req.body.email,
       status: req.body.status,
@@ -12,7 +21,6 @@ exports.createContact = async (req, res, next) => {
       tags: req.body.tags,
       owner: req.params.id,
     });
-    let foundUser = await db.User.findById(req.params.id);
     foundUser.contacts.push(contact.id);
     await foundUser.save();
     let foundContact = await db.Contact.findById(contact.id);
