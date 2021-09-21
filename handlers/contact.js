@@ -4,27 +4,32 @@ exports.createContact = async (req, res, next) => {
   try {
     let foundUser = await db.User.findById(req.params.id);
     let userContacts = await db.Contact.find({ owner: req.params.id });
-    userContacts.forEach((contact) => {
+    let duplicate = false;
+    await userContacts.forEach((contact) => {
       if (contact.email === req.body.email) {
-        return res
-          .status(400)
-          .json({ message: "Contact with same email already exists." });
+        duplicate = true;
       }
     });
-    let contact = await db.Contact.create({
-      email: req.body.email,
-      status: req.body.status,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      location: req.body.location,
-      language: req.body.language,
-      tags: req.body.tags,
-      owner: req.params.id,
-    });
-    foundUser.contacts.push(contact.id);
-    await foundUser.save();
-    let foundContact = await db.Contact.findById(contact.id);
-    return res.status(200).json(foundContact);
+    if (duplicate) {
+      return res
+        .status(400)
+        .json({ message: "Contact with same email already exists." });
+    } else {
+      let contact = await db.Contact.create({
+        email: req.body.email,
+        status: req.body.status,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        location: req.body.location,
+        language: req.body.language,
+        tags: req.body.tags,
+        owner: req.params.id,
+      });
+      foundUser.contacts.push(contact.id);
+      await foundUser.save();
+      let foundContact = await db.Contact.findById(contact.id);
+      return res.status(200).json(foundContact);
+    }
   } catch (err) {
     return next(err);
   }
