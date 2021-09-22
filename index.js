@@ -3,6 +3,7 @@ const express = require("express");
 const errorHandler = require("./handlers/error");
 const authRoutes = require("./routes/auth");
 const contactRoutes = require("./routes/contact");
+const emailRoutes = require("./routes/testEmail");
 const cors = require("cors");
 const app = express();
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/auth", authRoutes);
 app.use("/api/user/:id/contacts", contactRoutes);
+app.use("/api/email/send", emailRoutes);
 
 app.use(function (req, res, next) {
   let error = new Error("Not found!");

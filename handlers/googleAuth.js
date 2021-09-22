@@ -5,14 +5,16 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.createUser = async (req, res, next) => {
   try {
-    const { token } = req.body;
+    const { idToken, accessToken } = req.body;
     console.log(req.body);
     const ticket = await client.verifyIdToken({
-      idToken: token,
+      idToken: idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
-    const { given_name, family_name, email, picture } = ticket.getPayload();
+    const { given_name, family_name, email, picture } =
+      await ticket.getPayload();
+    console.log(ticket.getPayload());
 
     let foundUser = await db.User.findOne({ email: email });
     if (foundUser) {
@@ -24,16 +26,19 @@ exports.createUser = async (req, res, next) => {
     } else {
       console.log("created");
       let user = await db.User.create({
-        googleToken: token,
-        email: email,
+        googleIdToken: idToken,
+        googleAccessToken: accessToken,
+        email: "venkatesh46.ch@gmail.com",
         firstName: given_name,
         lastName: family_name,
       });
+      console.log("debug");
       const { id, email, firstName, lastName } = user;
       let jwtToken = jwt.sign({ id, email }, "crmx secret");
       return res.status(200).json({ id, email, jwtToken, firstName, lastName });
     }
   } catch (err) {
+    console.log(err.message);
     return next({
       status: 400,
       message: err.message,

@@ -16,6 +16,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
+  googleIdToken: {
+    type: String,
+    unique: true,
+  },
+  googleAccessToken: {
+    type: String,
+    unique: true,
+  },
   contacts: [
     {
       type: mongoose.Schema.Types.ObjectId,
