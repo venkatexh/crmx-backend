@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/user/:id/contacts", contactRoutes);
 app.use("/api/email/send", emailRoutes);
-app.use("/api/campaign", campaignRoutes);
+app.use("/api/user/:id/campaigns", campaignRoutes);
 
 app.use(function (req, res, next) {
   let error = new Error("Not found!");

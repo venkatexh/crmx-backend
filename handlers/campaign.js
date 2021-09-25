@@ -43,3 +43,12 @@ exports.createCampaign = async (req, res, next) => {
     });
   }
 };
+
+exports.getUserCampaigns = async (req, res, next) => {
+  try {
+    let campaigns = await db.Campaign.find({ owner: req.params.id });
+    return res.status(200).json(campaigns);
+  } catch (err) {
+    return next(err);
+  }
+};
