@@ -30,6 +30,12 @@ const userSchema = new mongoose.Schema({
       ref: "Contact",
     },
   ],
+  campaigns: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Campaign",
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {
