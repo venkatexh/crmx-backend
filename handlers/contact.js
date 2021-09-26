@@ -50,9 +50,9 @@ exports.getContactsByTag = async (req, res, next) => {
     const contacts = [];
     for (const id of tag.contacts) {
       const contact = await db.Contact.findById(id.toString());
-      contacts.push(contact.email);
+      contact ? contacts.push(contact.email) : {};
     }
-    return res.status(200).json(contacts);
+    return res.status(200).json(contacts.length > 0 ? contacts : []);
   } catch (err) {
     return next(err);
   }
