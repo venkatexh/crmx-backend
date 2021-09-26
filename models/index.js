@@ -8,3 +8,4 @@ mongoose.connect(
 module.exports.User = require("./user");
 module.exports.Contact = require("./contact");
 module.exports.Campaign = require("./campaign");
+module.exports.Tag = require("./tag");

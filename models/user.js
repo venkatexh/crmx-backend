@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema({
       ref: "Campaign",
     },
   ],
+  tags: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

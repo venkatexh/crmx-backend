@@ -11,7 +11,7 @@ const contactSchema = new mongoose.Schema({
   lastName: String,
   location: String,
   language: String,
-  tags: [{ tag: String }],
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth");
 const contactRoutes = require("./routes/contact");
 const emailRoutes = require("./routes/testEmail");
 const campaignRoutes = require("./routes/campaign");
+const tagRoutes = require("./routes/tag");
 const cors = require("cors");
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user/:id/contacts", contactRoutes);
 app.use("/api/email/send", emailRoutes);
 app.use("/api/user/:id/campaigns", campaignRoutes);
+app.use("/api/user/:id/tags", tagRoutes);
 
 app.use(function (req, res, next) {
   let error = new Error("Not found!");
