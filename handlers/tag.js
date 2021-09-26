@@ -34,3 +34,12 @@ exports.createTag = async (req, res, next) => {
     return next(err);
   }
 };
+
+exports.getUserTags = async (req, res, next) => {
+  try {
+    const tags = await db.Tag.find({ owner: req.params.id });
+    return res.status(200).json(tags);
+  } catch (err) {
+    return next(err);
+  }
+};
