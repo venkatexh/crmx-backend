@@ -16,8 +16,17 @@ exports.createCampaign = async (req, res, next) => {
         .status(400)
         .json({ message: "Campaign with same name already exists." });
     } else {
-      const { name, status, scheduledAt, sentTo, sentAt, subject, text, html } =
-        req.body;
+      const {
+        name,
+        status,
+        scheduledAt,
+        sentTo,
+        sentAt,
+        subject,
+        text,
+        html,
+        tags,
+      } = req.body;
       let campaign = await db.Campaign.create({
         name,
         status,
@@ -27,6 +36,7 @@ exports.createCampaign = async (req, res, next) => {
         subject,
         text,
         html,
+        tags,
         owner: req.params.id,
       });
       foundUser.campaigns.push(campaign.id);

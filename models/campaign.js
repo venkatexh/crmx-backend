@@ -25,10 +25,12 @@ const campaignSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  tags: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Tag",
-  },
+  tags: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+    },
+  ],
 });
 
 const Campaign = mongoose.model("Campaign", campaignSchema);
