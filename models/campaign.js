@@ -10,12 +10,7 @@ const campaignSchema = new mongoose.Schema({
     default: "draft",
   },
   scheduledAt: String,
-  sentTo: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Contact",
-    },
-  ],
+  sentTo: [],
   sentAt: String,
   subject: String,
   text: String,
