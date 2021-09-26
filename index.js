@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
   res.status(200).send("CRMX API");
 });
 app.use("/api/auth", authRoutes);
-app.use("/api/user/:id/contacts", contactRoutes);
+app.use("/api", contactRoutes);
 app.use("/api/email/send", emailRoutes);
 app.use("/api/user/:id/campaigns", campaignRoutes);
 app.use("/api/user/:id/tags", tagRoutes);

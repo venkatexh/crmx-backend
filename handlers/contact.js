@@ -43,3 +43,17 @@ exports.getUserContacts = async (req, res, next) => {
     return next(err);
   }
 };
+
+exports.getContactsByTag = async (req, res, next) => {
+  try {
+    let tag = await db.Tag.findById(req.params.id);
+    const contacts = [];
+    for (const id of tag.contacts) {
+      const contact = await db.Contact.findById(id.toString());
+      contacts.push(contact.email);
+    }
+    return res.status(200).json(contacts);
+  } catch (err) {
+    return next(err);
+  }
+};
