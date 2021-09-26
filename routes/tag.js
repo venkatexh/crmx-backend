@@ -1,7 +1,7 @@
 const express = require("express");
 const Router = express.Router({ mergeParams: true });
-const { createTag } = require("../handlers/tag");
+const { createTag, getUserTags } = require("../handlers/tag");
 
-Router.route("/").post(createTag);
+Router.route("/").post(createTag).get(getUserTags);
 
 module.exports = Router;
