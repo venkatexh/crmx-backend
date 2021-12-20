@@ -16,27 +16,35 @@ exports.createCampaign = async (req, res, next) => {
         .status(400)
         .json({ message: "Campaign with same name already exists." });
     } else {
+      const emails = [];
+      for (const id of req.body.tags) {
+        const tag = await db.Tag.findById(id);
+        tag.contacts.forEach(contact => {
+          emails.push(contact)
+        });
+      }
       const {
         name,
         status,
         scheduledAt,
-        sentTo,
         sentAt,
         subject,
         text,
         html,
         tags,
+        from
       } = req.body;
       let campaign = await db.Campaign.create({
         name,
         status,
         scheduledAt,
-        sentTo,
+        sentTo: emails,
         sentAt,
         subject,
         text,
         html,
         tags,
+        from,
         owner: req.params.id,
       });
       foundUser.campaigns.push(campaign.id);
