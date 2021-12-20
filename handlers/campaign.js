@@ -4,7 +4,6 @@ exports.createCampaign = async (req, res, next) => {
   try {
     let foundUser = await db.User.findById(req.params.id);
     let userCampaigns = await db.Campaign.find({ owner: req.params.id });
-    console.log(userCampaigns);
     let duplicate = false;
     await userCampaigns.forEach((campaign) => {
       if (campaign.name === req.body.name) {
@@ -19,9 +18,10 @@ exports.createCampaign = async (req, res, next) => {
       const emails = [];
       for (const id of req.body.tags) {
         const tag = await db.Tag.findById(id);
-        tag.contacts.forEach(contact => {
-          emails.push(contact)
-        });
+        for (const id in tag.contacts) {
+          const contact = await db.Contact.findById(tag.contacts[id].toString());
+          emails.push(contact.email)
+        }
       }
       const {
         name,

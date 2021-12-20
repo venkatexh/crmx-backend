@@ -11,17 +11,24 @@ exports.sendCampaign = async (req, res, next) => {
         pass: process.env.SENDGRID_KEY,
       },
     });
+    const campaign = await db.Campaign.findById(req.body.campaignId);
+    console.log(campaign)
     const mailOptions = {
-      from: `${req.body.from} <mail@crmx.fun>`,
-      to: req.body.sentTo,
-      subject: "Node.js Email with Secure OAuth",
+      from: `${campaign.from} <mail@crmx.fun>`,
+      bcc: campaign.sentTo,
+      subject: campaign.subject,
       generateTextFromHTML: true,
-      html: "<b>test</b>",
+      text: campaign.text,
+      html: campaign.html
     };
-    transporter.sendMail(mailOptions, (error, response) => {
-      error
-        ? console.log(error)
-        : res.status(200).json({ message: "Mail sent" });
+    await transporter.sendMail(mailOptions, (error, response) => {
+      if (error) {
+        console.log(error)
+      } else {
+        campaign.sentAt = Date.now();
+        campaign.status = "Sent";
+        res.status(200).json({message: "Campaign sent"});
+      }
       transporter.close();
     });
   } catch (err) {
