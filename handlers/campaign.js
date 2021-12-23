@@ -3,7 +3,7 @@ const db = require("../models");
 exports.createCampaign = async (req, res, next) => {
   try {
     let foundUser = await db.User.findById(req.params.id);
-    let userCampaigns = await db.Campaign.find({ owner: req.params.id });
+    let userCampaigns = await db.Campaign.find({owner: req.params.id});
     let duplicate = false;
     await userCampaigns.forEach((campaign) => {
       if (campaign.name === req.body.name) {
@@ -13,7 +13,7 @@ exports.createCampaign = async (req, res, next) => {
     if (duplicate) {
       return res
         .status(400)
-        .json({ message: "Campaign with same name already exists." });
+        .json({message: "Campaign with same name already exists."});
     } else {
       const emails = [];
       for (const id of req.body.tags) {
@@ -64,9 +64,24 @@ exports.createCampaign = async (req, res, next) => {
 
 exports.getUserCampaigns = async (req, res, next) => {
   try {
-    let campaigns = await db.Campaign.find({ owner: req.params.id });
+    let campaigns = await db.Campaign.find({owner: req.params.id});
     return res.status(200).json(campaigns);
   } catch (err) {
     return next(err);
   }
 };
+
+exports.getCampaign = async (req, res, next) => {
+  try {
+    let campaign = await db.Campaign.findById(req.params.id);
+    const tags = [];
+    for (const idx in campaign.tags) {
+      let tag = await db.Tag.findById(campaign.tags[idx]);
+      tags.push(tag);
+    }
+    campaign.tags = tags;
+    return res.status(200).json(campaign);
+  } catch (err) {
+    return next(err);
+  }
+}

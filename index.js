@@ -16,7 +16,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
   res.status(200).send("CRMX API");
@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api", contactRoutes);
 app.use("/api/email/send", emailRoutes);
-app.use("/api/user/:id/campaigns", campaignRoutes);
+app.use("/api", campaignRoutes);
 app.use("/api/user/:id/tags", tagRoutes);
 
 app.use(function (req, res, next) {

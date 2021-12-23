@@ -1,11 +1,11 @@
 const express = require("express");
-const Router = express.Router({ mergeParams: true });
+const Router = express.Router({mergeParams: true});
 
-const { createCampaign, getUserCampaigns } = require("../handlers/campaign");
-const { sendCampaign } = require("../handlers/sendEmail");
+const {createCampaign, getUserCampaigns, getCampaign} = require("../handlers/campaign");
+const {sendCampaign} = require("../handlers/sendEmail");
 
-Router.route("/").post(createCampaign).get(getUserCampaigns);
-
+Router.route("/user/:id/campaigns").post(createCampaign).get(getUserCampaigns);
+Router.route("/campaign/:id").get(getCampaign);
 Router.route("/send").post(sendCampaign);
 
 module.exports = Router;
