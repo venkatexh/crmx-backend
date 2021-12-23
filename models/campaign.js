@@ -10,10 +10,7 @@ const campaignSchema = new mongoose.Schema({
     default: "draft",
   },
   scheduledAt: String,
-  from: {
-    type: String,
-    required: true,
-  },
+  from: String,
   sentTo: [],
   sentAt: String,
   subject: String,

@@ -3,14 +3,14 @@ const express = require("express");
 const errorHandler = require("./handlers/error");
 const authRoutes = require("./routes/auth");
 const contactRoutes = require("./routes/contact");
-const emailRoutes = require("./routes/testEmail");
+const emailRoutes = require("./routes/sendEmail");
 const campaignRoutes = require("./routes/campaign");
 const tagRoutes = require("./routes/tag");
 const cors = require("cors");
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "https://www.crmx.fun", "https://crmx.fun"],
   methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
 };
 

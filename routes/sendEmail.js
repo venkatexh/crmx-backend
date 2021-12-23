@@ -1,8 +1,8 @@
 const express = require("express");
 const Router = express.Router();
 
-const { sendEmail } = require("../handlers/testEmail");
+const { sendCampaign } = require("../handlers/sendEmail");
 
-Router.post("/", sendEmail);
+Router.post("/", sendCampaign);
 
 module.exports = Router;
