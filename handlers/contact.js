@@ -3,7 +3,7 @@ const db = require("../models");
 exports.createContact = async (req, res, next) => {
   try {
     let foundUser = await db.User.findById(req.params.id);
-    let userContacts = await db.Contact.find({ owner: req.params.id });
+    let userContacts = await db.Contact.find({owner: req.params.id});
     let duplicate = false;
     await userContacts.forEach((contact) => {
       if (contact.email === req.body.email) {
@@ -13,7 +13,7 @@ exports.createContact = async (req, res, next) => {
     if (duplicate) {
       return res
         .status(400)
-        .json({ message: "Contact with same email already exists." });
+        .json({message: "Contact with same email already exists."});
     } else {
       let contact = await db.Contact.create({
         email: req.body.email,
@@ -37,7 +37,7 @@ exports.createContact = async (req, res, next) => {
 
 exports.getUserContacts = async (req, res, next) => {
   try {
-    let contacts = await db.Contact.find({ owner: req.params.id });
+    let contacts = await db.Contact.find({owner: req.params.id});
     return res.status(200).json(contacts);
   } catch (err) {
     return next(err);
@@ -57,3 +57,12 @@ exports.getContactsByTag = async (req, res, next) => {
     return next(err);
   }
 };
+
+exports.getContact = async (req, res, next) => {
+  try {
+    let contact = await db.Contact.findById(req.params.id);
+    return res.status(200).json(contact);
+  } catch (err) {
+    return next(err);
+  }
+}
