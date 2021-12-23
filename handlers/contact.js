@@ -22,11 +22,16 @@ exports.createContact = async (req, res, next) => {
         lastName: req.body.lastName,
         location: req.body.location,
         language: req.body.language,
-        tags: req.body.tags,
+        tags: req.body.tags.map(tag => tag.id),
         owner: req.params.id,
       });
       foundUser.contacts.push(contact.id);
       await foundUser.save();
+      for (const id in req.body.tags) {
+        const tag = await db.Tag.findById(req.body.tags[id].id);
+        tag.contacts.push(contact.id);
+        tag.save();
+      }
       let foundContact = await db.Contact.findById(contact.id);
       return res.status(200).json(foundContact);
     }
@@ -61,6 +66,12 @@ exports.getContactsByTag = async (req, res, next) => {
 exports.getContact = async (req, res, next) => {
   try {
     let contact = await db.Contact.findById(req.params.id);
+    let tags = [];
+    for (const id in contact.tags) {
+      let tag = await db.Tag.findById(contact.tags[id]);
+      tags.push(tag)
+    }
+    contact.tags = tags;
     return res.status(200).json(contact);
   } catch (err) {
     return next(err);
