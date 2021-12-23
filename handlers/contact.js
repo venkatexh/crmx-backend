@@ -77,3 +77,46 @@ exports.getContact = async (req, res, next) => {
     return next(err);
   }
 }
+
+exports.getContactTags = async (req, res, next) => {
+  try {
+    let contact = await db.Contact.findById(req.params.id);
+    let tags = [];
+    for (const id in contact.tags) {
+      let tag = await db.Tag.findById(contact.tags[id]);
+      tags.push(tag)
+    }
+    return res.status(200).json(tags)
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.addTagToContact = async (req, res, next) => {
+  try {
+    let contact = await db.Contact.findById(req.body.contactId);
+    contact.tags.push(req.body.tagId);
+    contact.save();
+    return res.status(200).json(contact);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+exports.removeContactTag = async (req, res, next) => {
+  try {
+    let contact = await db.Contact.findById(req.body.contactId);
+    contact.tags = await contact.tags.filter(id => id.toString() !== req.body.tagId);
+    contact.save();
+    let updatedContact = await db.Contact.findById(contact.id);
+    let tags = [];
+    for (const id in updatedContact.tags) {
+      let tag = await db.Tag.findById(updatedContact.tags[id]);
+      tags.push(tag)
+    }
+    updatedContact.tags = tags;
+    return res.status(200).json(updatedContact);
+  } catch (err) {
+    return next(err);
+  }
+}
