@@ -107,7 +107,7 @@ exports.removeContactTag = async (req, res, next) => {
   try {
     let contact = await db.Contact.findById(req.body.contactId);
     contact.tags = await contact.tags.filter(id => id.toString() !== req.body.tagId);
-    contact.save();
+    await contact.save();
     let updatedContact = await db.Contact.findById(contact.id);
     let tags = [];
     for (const id in updatedContact.tags) {
@@ -115,6 +115,7 @@ exports.removeContactTag = async (req, res, next) => {
       tags.push(tag)
     }
     updatedContact.tags = tags;
+    console.log(updatedContact)
     return res.status(200).json(updatedContact);
   } catch (err) {
     return next(err);
