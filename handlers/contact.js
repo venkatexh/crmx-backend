@@ -40,6 +40,34 @@ exports.createContact = async (req, res, next) => {
   }
 };
 
+exports.removeContact = async (req, res, next) => {
+  try {
+    await db.Contact.findByIdAndDelete(req.params.id);
+    return res.status(200).json({message: "Contact deleted"})
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.subscribeContact = async (req, res, next) => {
+  try {
+    let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Subscribed"}, {new: true});
+    return res.status(200).json(contact);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+exports.unsubscribeContact = async (req, res, next) => {
+  try {
+    let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Unsubscribed"}, {new: true});
+    console.log(contact);
+    return res.status(200).json(contact);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 exports.getUserContacts = async (req, res, next) => {
   try {
     let contacts = await db.Contact.find({owner: req.params.id});
