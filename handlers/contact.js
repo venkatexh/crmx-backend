@@ -60,6 +60,13 @@ exports.removeContact = async (req, res, next) => {
 exports.subscribeContact = async (req, res, next) => {
   try {
     let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Subscribed"}, {new: true});
+    let subscribedActivity = await db.Activity.create({
+      type: 'Subscribed',
+      owner: contact.id,
+      doneAt: Date.now()
+    });
+    contact.activities.push(subscribedActivity.id);
+    await contact.save();
     let tags = [];
     let activities = [];
     for (const id in contact.tags) {
@@ -81,6 +88,13 @@ exports.subscribeContact = async (req, res, next) => {
 exports.unsubscribeContact = async (req, res, next) => {
   try {
     let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Unsubscribed"}, {new: true});
+    let unsubscribedActivity = await db.Activity.create({
+      type: 'Unsubscribed',
+      owner: contact.id,
+      doneAt: Date.now()
+    });
+    contact.activities.push(unsubscribedActivity.id);
+    await contact.save();
     let tags = [];
     let activities = [];
     for (const id in contact.tags) {
