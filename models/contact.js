@@ -11,11 +11,17 @@ const contactSchema = new mongoose.Schema({
   lastName: String,
   location: String,
   language: String,
-  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+  tags: [{type: mongoose.Schema.Types.ObjectId, ref: "Tag"}],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  activities: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Activity'
+    }
+  ],
   createdAt: Date,
   lastUpdatedAt: String,
 });

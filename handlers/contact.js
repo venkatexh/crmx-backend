@@ -33,6 +33,14 @@ exports.createContact = async (req, res, next) => {
         tag.save();
       }
       let foundContact = await db.Contact.findById(contact.id);
+      let activity = await db.Activity.create({
+        type: 'Added',
+        owner: foundContact.id,
+        text: 'Contact was added',
+        doneAt: Date.now()
+      })
+      foundContact.activities.push(activity);
+      await foundContact.save();
       return res.status(200).json(foundContact);
     }
   } catch (err) {
@@ -53,11 +61,17 @@ exports.subscribeContact = async (req, res, next) => {
   try {
     let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Subscribed"}, {new: true});
     let tags = [];
+    let activities = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
       tags.push(tag)
     }
     contact.tags = tags;
+    for (const id in contact.activities) {
+      let activity = await db.Activity.findById(contact.activities[id]);
+      activities.push(activity);
+    }
+    contact.activities = activities;
     return res.status(200).json(contact);
   } catch (err) {
     return next(err);
@@ -68,11 +82,17 @@ exports.unsubscribeContact = async (req, res, next) => {
   try {
     let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Unsubscribed"}, {new: true});
     let tags = [];
+    let activities = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
       tags.push(tag)
     }
     contact.tags = tags;
+    for (const id in contact.activities) {
+      let activity = await db.Activity.findById(contact.activities[id]);
+      activities.push(activity);
+    }
+    contact.activities = activities;
     return res.status(200).json(contact);
   } catch (err) {
     return next(err);
@@ -106,11 +126,17 @@ exports.getContact = async (req, res, next) => {
   try {
     let contact = await db.Contact.findById(req.params.id);
     let tags = [];
+    let activities = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
       tags.push(tag)
     }
     contact.tags = tags;
+    for (const id in contact.activities) {
+      let activity = await db.Activity.findById(contact.activities[id]);
+      activities.push(activity);
+    }
+    contact.activities = activities;
     return res.status(200).json(contact);
   } catch (err) {
     return next(err);

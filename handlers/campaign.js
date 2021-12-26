@@ -16,11 +16,17 @@ exports.createCampaign = async (req, res, next) => {
         .json({message: "Campaign with same name already exists."});
     } else {
       const emails = [];
+      const contacts = [];
       for (const id of req.body.tags) {
         const tag = await db.Tag.findById(id);
         for (const id in tag.contacts) {
           const contact = await db.Contact.findById(tag.contacts[id].toString());
-          emails.push(contact.email)
+          if (!contacts.includes(contact.id)) {
+            contacts.push(contact.id);
+          }
+          if (!emails.includes(contact.email)) {
+            emails.push(contact.email);
+          }
         }
       }
       const {
@@ -40,6 +46,7 @@ exports.createCampaign = async (req, res, next) => {
         scheduledAt,
         sentTo: emails,
         sentAt,
+        recipients: contacts,
         subject,
         text,
         html,

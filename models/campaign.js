@@ -12,7 +12,13 @@ const campaignSchema = new mongoose.Schema({
   scheduledAt: String,
   from: String,
   sentTo: [],
-  sentAt: String,
+  recipients: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Contact"
+    }
+  ],
+  sentAt: Date,
   subject: String,
   text: String,
   html: String,
