@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   company: String,
+  plan: {
+    type: String,
+    default: 'Free'
+  },
   password: {
     type: String,
   },
@@ -42,6 +46,7 @@ const userSchema = new mongoose.Schema({
       ref: "Tag",
     },
   ],
+  bills: []
 });
 
 userSchema.pre("save", async function (next) {
