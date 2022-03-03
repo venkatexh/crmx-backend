@@ -14,11 +14,24 @@ const userSchema = new mongoose.Schema({
   },
   company: String,
   plan: {
-    type: String,
-    default: 'Free'
+    name: {
+      type: String,
+      default: "Free"
+    },
+    amount: String,
+    rate: String,
+    billDate: String,
   },
   password: {
     type: String,
+  },
+  billing_address: {
+    line1: String,
+    line2: String,
+    postal_code: String,
+    city: String,
+    state: String,
+    country: String
   },
   googleIdToken: {
     type: String,
