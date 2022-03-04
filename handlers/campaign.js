@@ -3,7 +3,7 @@ const notifications = require("../services/notifications");
 
 exports.createCampaign = async (req, res, next) => {
   try {
-    let foundOrg = await db.User.findById(req.query.org_id);
+    let foundOrg = await db.Organization.findById(req.query.org_id);
     let orgCampaigns = await db.Campaign.find({ owner: req.query.org_id });
     let duplicate = false;
     await orgCampaigns.forEach((campaign) => {
@@ -63,8 +63,13 @@ exports.createCampaign = async (req, res, next) => {
       let notification = await db.Notification.create({
         type: "campaign_created",
         name: campaign.name,
+        owner: req.query.org_id,
       });
-      await notifications("notifications", "notifications", notification);
+      await notifications(
+        foundOrg.orgInternalId,
+        "notifications",
+        notification
+      );
       return res.status(200).json(campaign);
     }
   } catch (err) {

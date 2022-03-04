@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema({
   organization: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Organization",
+    immutable: true,
+    unique: true,
   },
   password: {
     type: String,

@@ -5,7 +5,7 @@ const {
 } = require("../handlers/notifications");
 const Router = express.Router({ mergeParams: true });
 
-Router.route("/organization/:id").get(getOrgNotifications);
+Router.route("/organization").get(getOrgNotifications);
 Router.route("/:id").get(getNotification);
 
 module.exports = Router;

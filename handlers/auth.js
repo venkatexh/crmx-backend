@@ -8,13 +8,14 @@ exports.signin = async (req, res, next) => {
     let isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
       let token = jwt.sign({ id, email }, "crmx secret");
+      let userOrganization = await db.Organization.findById(organization);
       return res.status(200).json({
         id,
         email,
         token,
         firstName,
         lastName,
-        organization,
+        userOrganization,
       });
     } else {
       return next({
@@ -35,9 +36,10 @@ exports.signup = async (req, res, next) => {
     let user = await db.User.create(req.body);
     let { id, email, firstName, lastName, organization } = user;
     let token = jwt.sign({ id, email }, "crmx secret");
+    let userOrganization = await db.Organization.findById(organization);
     return res
       .status(200)
-      .json({ id, email, token, firstName, lastName, organization });
+      .json({ id, email, token, firstName, lastName, userOrganization });
   } catch (err) {
     if (err.Code === 11000) {
       err.message = "Email already taken";

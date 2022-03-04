@@ -11,5 +11,4 @@ module.exports = async (channel, event, data) => {
   await pusher.trigger(channel, event, {
     data,
   });
-  console.log("trigger");
 };

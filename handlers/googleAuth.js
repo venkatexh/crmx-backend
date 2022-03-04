@@ -20,9 +20,12 @@ exports.createUser = async (req, res, next) => {
     if (foundUser) {
       console.log("found");
       console.log(foundUser);
-      const { id, email, firstName, lastName } = foundUser;
+      const { id, email, firstName, lastName, organization } = foundUser;
       let jwtToken = jwt.sign({ id, email }, "crmx secret");
-      return res.status(200).json({ id, email, jwtToken, firstName, lastName });
+      let userOrganization = await db.Organization.findById(organization);
+      return res
+        .status(200)
+        .json({ id, email, jwtToken, firstName, lastName, userOrganization });
     } else {
       console.log("created");
       let user = await db.User.create({
@@ -33,9 +36,11 @@ exports.createUser = async (req, res, next) => {
         lastName: family_name,
       });
       console.log("debug");
-      const { id, email, firstName, lastName } = user;
+      const { id, email, firstName, lastName, organization } = user;
       let jwtToken = jwt.sign({ id, email }, "crmx secret");
-      return res.status(200).json({ id, email, jwtToken, firstName, lastName });
+      return res
+        .status(200)
+        .json({ id, email, jwtToken, firstName, lastName, organization });
     }
   } catch (err) {
     console.log(err.message);
