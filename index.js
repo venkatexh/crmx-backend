@@ -7,7 +7,8 @@ const emailRoutes = require("./routes/sendEmail");
 const campaignRoutes = require("./routes/campaign");
 const tagRoutes = require("./routes/tag");
 const planRoutes = require("./routes/plan");
-const paymentRoutes = require('./routes/payment');
+const paymentRoutes = require("./routes/payment");
+const notificationRoutes = require("./routes/notifications");
 const cors = require("cors");
 const app = express();
 
@@ -18,7 +19,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.status(200).send("CRMX API");
@@ -30,6 +31,7 @@ app.use("/api", campaignRoutes);
 app.use("/api/user/:id/tags", tagRoutes);
 app.use("/api/user", planRoutes);
 app.use("/api", paymentRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(function (req, res, next) {
   let error = new Error("Not found!");
@@ -39,8 +41,8 @@ app.use(function (req, res, next) {
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 app.listen(PORT, () => {
-  console.log("Server running..");
+  console.log(`Server running on ${PORT}..`);
 });

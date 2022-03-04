@@ -1,9 +1,10 @@
 const db = require("../models");
+const notifications = require("../services/notifications");
 
 exports.createCampaign = async (req, res, next) => {
   try {
     let foundUser = await db.User.findById(req.params.id);
-    let userCampaigns = await db.Campaign.find({owner: req.params.id});
+    let userCampaigns = await db.Campaign.find({ owner: req.params.id });
     let duplicate = false;
     await userCampaigns.forEach((campaign) => {
       if (campaign.name === req.body.name) {
@@ -13,14 +14,16 @@ exports.createCampaign = async (req, res, next) => {
     if (duplicate) {
       return res
         .status(400)
-        .json({message: "Campaign with same name already exists."});
+        .json({ message: "Campaign with same name already exists." });
     } else {
       const emails = [];
       const contacts = [];
       for (const id of req.body.tags) {
         const tag = await db.Tag.findById(id);
         for (const id in tag.contacts) {
-          const contact = await db.Contact.findById(tag.contacts[id].toString());
+          const contact = await db.Contact.findById(
+            tag.contacts[id].toString()
+          );
           if (!contacts.includes(contact.id)) {
             contacts.push(contact.id);
           }
@@ -38,7 +41,7 @@ exports.createCampaign = async (req, res, next) => {
         text,
         html,
         tags,
-        from
+        from,
       } = req.body;
       let campaign = await db.Campaign.create({
         name,
@@ -56,6 +59,11 @@ exports.createCampaign = async (req, res, next) => {
       });
       foundUser.campaigns.push(campaign.id);
       foundUser.save();
+      let notification = await db.Notification.create({
+        type: "campaign_created",
+        name: campaign.name,
+      });
+      await notifications("notifications", "notifications", notification);
       return res.status(200).json(campaign);
     }
   } catch (err) {
@@ -71,7 +79,7 @@ exports.createCampaign = async (req, res, next) => {
 
 exports.getUserCampaigns = async (req, res, next) => {
   try {
-    let campaigns = await db.Campaign.find({owner: req.params.id});
+    let campaigns = await db.Campaign.find({ owner: req.params.id });
     return res.status(200).json(campaigns);
   } catch (err) {
     return next(err);
@@ -91,4 +99,4 @@ exports.getCampaign = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-}
+};
