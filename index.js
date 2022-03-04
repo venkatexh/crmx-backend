@@ -9,6 +9,7 @@ const tagRoutes = require("./routes/tag");
 const planRoutes = require("./routes/plan");
 const paymentRoutes = require("./routes/payment");
 const notificationRoutes = require("./routes/notifications");
+const organizationRoutes = require("./routes/organization");
 const cors = require("cors");
 const app = express();
 
@@ -28,10 +29,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api", contactRoutes);
 app.use("/api/email/send", emailRoutes);
 app.use("/api", campaignRoutes);
-app.use("/api/user/:id/tags", tagRoutes);
+app.use("/api/user/tags", tagRoutes);
 app.use("/api/user", planRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/organization", organizationRoutes);
 
 app.use(function (req, res, next) {
   let error = new Error("Not found!");

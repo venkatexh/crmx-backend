@@ -12,26 +12,12 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  company: String,
-  plan: {
-    name: {
-      type: String,
-      default: "Free"
-    },
-    amount: String,
-    rate: String,
-    billDate: String,
+  organization: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Organization",
   },
   password: {
     type: String,
-  },
-  billing_address: {
-    line1: String,
-    line2: String,
-    postal_code: String,
-    city: String,
-    state: String,
-    country: String
   },
   googleIdToken: {
     type: String,
@@ -41,25 +27,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  contacts: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Contact",
-    },
-  ],
-  campaigns: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Campaign",
-    },
-  ],
-  tags: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Tag",
-    },
-  ],
-  bills: []
 });
 
 userSchema.pre("save", async function (next) {

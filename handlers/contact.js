@@ -2,8 +2,8 @@ const db = require("../models");
 
 exports.createContact = async (req, res, next) => {
   try {
-    let foundUser = await db.User.findById(req.params.id);
-    let userContacts = await db.Contact.find({owner: req.params.id});
+    let foundOrg = await db.Organization.findById(req.query.org_id);
+    let userContacts = await db.Contact.find({ owner: req.query.org_id });
     let duplicate = false;
     await userContacts.forEach((contact) => {
       if (contact.email === req.body.email) {
@@ -13,7 +13,7 @@ exports.createContact = async (req, res, next) => {
     if (duplicate) {
       return res
         .status(400)
-        .json({message: "Contact with same email already exists."});
+        .json({ message: "Contact with same email already exists." });
     } else {
       let contact = await db.Contact.create({
         email: req.body.email,
@@ -22,11 +22,12 @@ exports.createContact = async (req, res, next) => {
         lastName: req.body.lastName,
         location: req.body.location,
         language: req.body.language,
-        tags: req.body.tags.map(tag => tag.id),
-        owner: req.params.id,
+        tags: req.body.tags.map((tag) => tag.id),
+        owner: req.query.org_id,
+        addedBy: req.query.user_id,
       });
-      foundUser.contacts.push(contact.id);
-      await foundUser.save();
+      foundOrg.contacts.push(contact.id);
+      await foundOrg.save();
       for (const id in req.body.tags) {
         const tag = await db.Tag.findById(req.body.tags[id].id);
         tag.contacts.push(contact.id);
@@ -34,11 +35,11 @@ exports.createContact = async (req, res, next) => {
       }
       let foundContact = await db.Contact.findById(contact.id);
       let activity = await db.Activity.create({
-        type: 'Added',
-        owner: foundContact.id,
-        text: 'Contact was added',
-        doneAt: Date.now()
-      })
+        type: "Added",
+        owner: req.query.org_id,
+        text: "Contact was added",
+        doneAt: Date.now(),
+      });
       foundContact.activities.push(activity);
       await foundContact.save();
       return res.status(200).json(foundContact);
@@ -51,7 +52,7 @@ exports.createContact = async (req, res, next) => {
 exports.removeContact = async (req, res, next) => {
   try {
     await db.Contact.findByIdAndDelete(req.params.id);
-    return res.status(200).json({message: "Contact deleted"})
+    return res.status(200).json({ message: "Contact deleted" });
   } catch (err) {
     return next(err);
   }
@@ -59,11 +60,15 @@ exports.removeContact = async (req, res, next) => {
 
 exports.subscribeContact = async (req, res, next) => {
   try {
-    let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Subscribed"}, {new: true});
+    let contact = await db.Contact.findByIdAndUpdate(
+      req.params.id,
+      { status: "Subscribed" },
+      { new: true }
+    );
     let subscribedActivity = await db.Activity.create({
-      type: 'Subscribed',
+      type: "Subscribed",
       owner: contact.id,
-      doneAt: Date.now()
+      doneAt: Date.now(),
     });
     contact.activities.push(subscribedActivity.id);
     await contact.save();
@@ -71,7 +76,7 @@ exports.subscribeContact = async (req, res, next) => {
     let activities = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
-      tags.push(tag)
+      tags.push(tag);
     }
     contact.tags = tags;
     for (const id in contact.activities) {
@@ -83,15 +88,19 @@ exports.subscribeContact = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-}
+};
 
 exports.unsubscribeContact = async (req, res, next) => {
   try {
-    let contact = await db.Contact.findByIdAndUpdate(req.params.id, {status: "Unsubscribed"}, {new: true});
+    let contact = await db.Contact.findByIdAndUpdate(
+      req.params.id,
+      { status: "Unsubscribed" },
+      { new: true }
+    );
     let unsubscribedActivity = await db.Activity.create({
-      type: 'Unsubscribed',
+      type: "Unsubscribed",
       owner: contact.id,
-      doneAt: Date.now()
+      doneAt: Date.now(),
     });
     contact.activities.push(unsubscribedActivity.id);
     await contact.save();
@@ -99,7 +108,7 @@ exports.unsubscribeContact = async (req, res, next) => {
     let activities = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
-      tags.push(tag)
+      tags.push(tag);
     }
     contact.tags = tags;
     for (const id in contact.activities) {
@@ -111,11 +120,11 @@ exports.unsubscribeContact = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-}
+};
 
-exports.getUserContacts = async (req, res, next) => {
+exports.getOrgContacts = async (req, res, next) => {
   try {
-    let contacts = await db.Contact.find({owner: req.params.id});
+    let contacts = await db.Contact.find({ owner: req.query.org_id });
     return res.status(200).json(contacts);
   } catch (err) {
     return next(err);
@@ -143,7 +152,7 @@ exports.getContact = async (req, res, next) => {
     let activities = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
-      tags.push(tag)
+      tags.push(tag);
     }
     contact.tags = tags;
     for (const id in contact.activities) {
@@ -155,7 +164,7 @@ exports.getContact = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-}
+};
 
 exports.getContactTags = async (req, res, next) => {
   try {
@@ -163,13 +172,13 @@ exports.getContactTags = async (req, res, next) => {
     let tags = [];
     for (const id in contact.tags) {
       let tag = await db.Tag.findById(contact.tags[id]);
-      tags.push(tag)
+      tags.push(tag);
     }
-    return res.status(200).json(tags)
+    return res.status(200).json(tags);
   } catch (err) {
-    return next(err)
+    return next(err);
   }
-}
+};
 
 exports.addTagToContact = async (req, res, next) => {
   try {
@@ -180,23 +189,25 @@ exports.addTagToContact = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-}
+};
 
 exports.removeContactTag = async (req, res, next) => {
   try {
     let contact = await db.Contact.findById(req.body.contactId);
-    contact.tags = await contact.tags.filter(id => id.toString() !== req.body.tagId);
+    contact.tags = await contact.tags.filter(
+      (id) => id.toString() !== req.body.tagId
+    );
     await contact.save();
     let updatedContact = await db.Contact.findById(contact.id);
     let tags = [];
     for (const id in updatedContact.tags) {
       let tag = await db.Tag.findById(updatedContact.tags[id]);
-      tags.push(tag)
+      tags.push(tag);
     }
     updatedContact.tags = tags;
-    console.log(updatedContact)
+    console.log(updatedContact);
     return res.status(200).json(updatedContact);
   } catch (err) {
     return next(err);
   }
-}
+};

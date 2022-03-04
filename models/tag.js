@@ -8,6 +8,10 @@ const tagSchema = new mongoose.Schema(
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Contact" }],

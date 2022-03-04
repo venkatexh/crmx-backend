@@ -1,16 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const activitySchema = new mongoose.Schema({
   type: String,
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "Organization",
   },
   campaignName: String,
   refId: String,
   text: String,
-  doneAt: Date
+  doneAt: Date,
 });
 
-const Activity = mongoose.model('Activity', activitySchema);
+const Activity = mongoose.model("Activity", activitySchema);
 module.exports = Activity;

@@ -3,10 +3,10 @@ const notifications = require("../services/notifications");
 
 exports.createCampaign = async (req, res, next) => {
   try {
-    let foundUser = await db.User.findById(req.params.id);
-    let userCampaigns = await db.Campaign.find({ owner: req.params.id });
+    let foundOrg = await db.User.findById(req.query.org_id);
+    let orgCampaigns = await db.Campaign.find({ owner: req.query.org_id });
     let duplicate = false;
-    await userCampaigns.forEach((campaign) => {
+    await orgCampaigns.forEach((campaign) => {
       if (campaign.name === req.body.name) {
         duplicate = true;
       }
@@ -55,10 +55,11 @@ exports.createCampaign = async (req, res, next) => {
         html,
         tags,
         from,
-        owner: req.params.id,
+        owner: req.query.org_id,
+        createdBy: req.query.user_id,
       });
-      foundUser.campaigns.push(campaign.id);
-      foundUser.save();
+      foundOrg.campaigns.push(campaign.id);
+      foundOrg.save();
       let notification = await db.Notification.create({
         type: "campaign_created",
         name: campaign.name,
@@ -77,9 +78,9 @@ exports.createCampaign = async (req, res, next) => {
   }
 };
 
-exports.getUserCampaigns = async (req, res, next) => {
+exports.getOrgCampaigns = async (req, res, next) => {
   try {
-    let campaigns = await db.Campaign.find({ owner: req.params.id });
+    let campaigns = await db.Campaign.find({ owner: req.query.org_id });
     return res.status(200).json(campaigns);
   } catch (err) {
     return next(err);
