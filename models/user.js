@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    required: true,
   },
   lastName: String,
   email: {
@@ -12,14 +11,22 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  organization: {
+  encryptedEmail: String,
+  organizationId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Organization",
     immutable: true,
-    unique: true,
   },
   password: {
     type: String,
+  },
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+  invited: {
+    type: Boolean,
+    default: false,
   },
   googleIdToken: {
     type: String,

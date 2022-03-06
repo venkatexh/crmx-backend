@@ -4,18 +4,18 @@ const jwt = require("jsonwebtoken");
 exports.signin = async (req, res, next) => {
   try {
     let user = await db.User.findOne({ email: req.body.email });
-    let { id, email, firstName, lastName, organization } = user;
+    let { id, email, firstName, lastName, organizationId } = user;
     let isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
       let token = jwt.sign({ id, email }, "crmx secret");
-      let userOrganization = await db.Organization.findById(organization);
+      let userOrganization = await db.Organization.findById(organizationId);
       return res.status(200).json({
         id,
         email,
         token,
         firstName,
         lastName,
-        userOrganization,
+        organization: userOrganization,
       });
     } else {
       return next({
@@ -34,9 +34,9 @@ exports.signin = async (req, res, next) => {
 exports.signup = async (req, res, next) => {
   try {
     let user = await db.User.create(req.body);
-    let { id, email, firstName, lastName, organization } = user;
+    let { id, email, firstName, lastName, organizationI } = user;
     let token = jwt.sign({ id, email }, "crmx secret");
-    let userOrganization = await db.Organization.findById(organization);
+    let userOrganization = await db.Organization.findById(organizationId);
     return res
       .status(200)
       .json({ id, email, token, firstName, lastName, userOrganization });

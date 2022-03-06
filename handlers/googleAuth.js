@@ -6,7 +6,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.createUser = async (req, res, next) => {
   try {
     const { idToken, accessToken } = req.body;
-    console.log(req.body);
     const ticket = await client.verifyIdToken({
       idToken: idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -14,33 +13,38 @@ exports.createUser = async (req, res, next) => {
 
     const { given_name, family_name, email, picture } =
       await ticket.getPayload();
-    console.log(ticket.getPayload());
-
-    let foundUser = await db.User.findOne({ email: email });
+    let foundUser = await db.User.findOne({ email });
     if (foundUser) {
-      console.log("found");
-      console.log(foundUser);
-      const { id, email, firstName, lastName, organization } = foundUser;
+      const { id, email, firstName, lastName, organizationId } = foundUser;
       let jwtToken = jwt.sign({ id, email }, "crmx secret");
-      let userOrganization = await db.Organization.findById(organization);
-      return res
-        .status(200)
-        .json({ id, email, jwtToken, firstName, lastName, userOrganization });
+      let userOrganization = await db.Organization.findById(organizationId);
+      return res.status(200).json({
+        id,
+        email,
+        jwtToken,
+        firstName,
+        lastName,
+        organization: userOrganization,
+      });
     } else {
-      console.log("created");
       let user = await db.User.create({
         googleIdToken: idToken,
         googleAccessToken: accessToken,
-        email: "venkatesh46.ch@gmail.com",
+        email,
         firstName: given_name,
         lastName: family_name,
       });
-      console.log("debug");
-      const { id, email, firstName, lastName, organization } = user;
+      const { id, email, firstName, lastName, organizationId } = user;
       let jwtToken = jwt.sign({ id, email }, "crmx secret");
-      return res
-        .status(200)
-        .json({ id, email, jwtToken, firstName, lastName, organization });
+      let userOrganization = await db.Organization.findById(organizationId);
+      return res.status(200).json({
+        id,
+        email,
+        jwtToken,
+        firstName,
+        lastName,
+        organization: userOrganization,
+      });
     }
   } catch (err) {
     console.log(err.message);

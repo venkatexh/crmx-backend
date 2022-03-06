@@ -55,6 +55,12 @@ const organizationSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  invitedAdmins: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "USer",
+    },
+  ],
   bills: [],
 });
 
