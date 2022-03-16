@@ -2,10 +2,10 @@ const db = require("../models");
 
 exports.createTag = async (req, res, next) => {
   try {
-    const foundUser = await db.User.findById(req.params.id);
-    const userTags = await db.Tag.find({ owner: req.params.id });
+    const foundOrg = await db.User.findById(req.query.org_);
+    const orgTags = await db.Tag.find({ owner: req.query.org_id });
     let duplicate = false;
-    await userTags.forEach((tag) => {
+    await orgTags.forEach((tag) => {
       if (tag.name === req.body.name) {
         duplicate = true;
       }
@@ -15,11 +15,12 @@ exports.createTag = async (req, res, next) => {
     } else {
       let tag = await db.Tag.create({
         name: req.body.name,
-        owner: req.params.id,
+        owner: req.query.org_id,
+        createdBy: req.query.user_id,
         contacts: req.body.contacts,
       });
-      foundUser.tags.push(tag.id);
-      await foundUser.save();
+      foundOrg.tags.push(tag.id);
+      await foundOrg.save();
       await req.body.contacts.forEach((contactId) => {
         db.Contact.findById(contactId).then((contact) => {
           contact.tags.push(tag.id);
@@ -27,7 +28,6 @@ exports.createTag = async (req, res, next) => {
         });
       });
       let foundTag = await db.Tag.findById(tag.id);
-      console.log(foundTag);
       return res.status(200).json(foundTag);
     }
   } catch (err) {
@@ -35,9 +35,9 @@ exports.createTag = async (req, res, next) => {
   }
 };
 
-exports.getUserTags = async (req, res, next) => {
+exports.getOrgTags = async (req, res, next) => {
   try {
-    const tags = await db.Tag.find({ owner: req.params.id });
+    const tags = await db.Tag.find({ owner: req.query.org_id });
     return res.status(200).json(tags);
   } catch (err) {
     return next(err);

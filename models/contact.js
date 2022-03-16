@@ -1,24 +1,35 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 
-const contactSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
+const contactSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+    },
+    status: String,
+    firstName: String,
+    lastName: String,
+    location: String,
+    language: String,
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+    },
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    activities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Activity",
+      },
+    ],
   },
-  status: String,
-  firstName: String,
-  lastName: String,
-  location: String,
-  language: String,
-  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  createdAt: Date,
-  lastUpdatedAt: String,
-});
+  { timestamps: true }
+);
 
 contactSchema.pre("remove", async function (next) {
   try {

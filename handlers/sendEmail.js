@@ -12,7 +12,6 @@ exports.sendCampaign = async (req, res, next) => {
       },
     });
     const campaign = await db.Campaign.findById(req.body.campaignId);
-    console.log(campaign)
     const mailOptions = {
       from: `${campaign.from} <mail@crmx.fun>`,
       bcc: campaign.sentTo,
@@ -21,12 +20,25 @@ exports.sendCampaign = async (req, res, next) => {
       text: campaign.text,
       html: campaign.html
     };
-    await transporter.sendMail(mailOptions, (error, response) => {
+    await transporter.sendMail(mailOptions, async (error, response) => {
       if (error) {
         console.log(error)
       } else {
         campaign.sentAt = Date.now();
         campaign.status = "Sent";
+        await campaign.save();
+        for (const id in campaign.recipients) {
+          const contact = await db.Contact.findById(campaign.recipients[id]);
+          const activity = await db.Activity.create({
+            type: 'Campaign',
+            owner: campaign.owner,
+            campaignName: campaign.name,
+            refId: campaign.id.toString(),
+            doneAt: Date.now()
+          })
+          contact.activities.push(activity.id);
+          await contact.save();
+        }
         res.status(200).json({message: "Campaign sent"});
       }
       transporter.close();
