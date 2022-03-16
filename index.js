@@ -43,7 +43,7 @@ app.use(function (req, res, next) {
 
 app.use(errorHandler);
 
-const PORT = 4000 || process.env.PORT;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}..`);
