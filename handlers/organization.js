@@ -37,13 +37,10 @@ exports.createOrganizationUser = async (req, res, next) => {
 
 exports.getOrganizationUsers = async (req, res, next) => {
   try {
-    const organization = await db.Organization.findById(req.query.org_id);
-    const users = [];
-    for (const idx in organization.admins) {
-      let user = await db.User.findById(organization.admins[idx].toString());
-      users.push(user);
-    }
-    return res.status(200).send(users);
+    const users = await db.User.find({ organizationId: req.query.org_id });
+    const invitedUsers = users.filter((user) => user.invited === true);
+    const currentUsers = users.filter((user) => user.invited !== true);
+    return res.status(200).send({ invitedUsers, currentUsers });
   } catch (err) {
     return next(err);
   }
