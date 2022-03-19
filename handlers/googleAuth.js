@@ -10,7 +10,6 @@ exports.createUser = async (req, res, next) => {
       idToken: idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
     const { given_name, family_name, email, picture } =
       await ticket.getPayload();
     let foundUser = await db.User.findOne({ email });

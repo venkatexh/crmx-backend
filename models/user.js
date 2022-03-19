@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema({
   organizationId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Organization",
-    immutable: true,
   },
   password: {
     type: String,
@@ -30,11 +29,13 @@ const userSchema = new mongoose.Schema({
   },
   googleIdToken: {
     type: String,
-    unique: true,
+    required: false,
+    default: "",
   },
   googleAccessToken: {
     type: String,
-    unique: true,
+    required: false,
+    default: "",
   },
 });
 
