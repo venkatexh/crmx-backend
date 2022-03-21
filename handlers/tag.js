@@ -2,7 +2,7 @@ const db = require("../models");
 
 exports.createTag = async (req, res, next) => {
   try {
-    const foundOrg = await db.User.findById(req.query.org_);
+    const foundOrg = await db.Organization.findById(req.query.org_id);
     const orgTags = await db.Tag.find({ owner: req.query.org_id });
     let duplicate = false;
     await orgTags.forEach((tag) => {
@@ -21,7 +21,7 @@ exports.createTag = async (req, res, next) => {
       });
       foundOrg.tags.push(tag.id);
       await foundOrg.save();
-      await req.body.contacts.forEach((contactId) => {
+      await req.body.contacts?.forEach((contactId) => {
         db.Contact.findById(contactId).then((contact) => {
           contact.tags.push(tag.id);
           contact.save();
